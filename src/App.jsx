@@ -20,7 +20,7 @@ function App() {
   // This ensures the user stays logged in if they refresh the browser
   async function isAuth() {
     try {
-      const response = await fetch("http://localhost:5000/auth/is-verify", {
+      const response = await fetch("https://pos-management-system-a8i5.onrender.com", {
         method: "GET",
         headers: { token: localStorage.getItem("token") }
       });

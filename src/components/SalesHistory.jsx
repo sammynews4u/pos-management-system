@@ -7,7 +7,7 @@ const SalesHistory = () => {
   // Fetch Sales from API
   const getSales = async () => {
     try {
-      const response = await fetch("http://localhost:5000/sales", {
+      const response = await fetch("https://pos-management-system-a8i5.onrender.com", {
         method: "GET",
         headers: { token: localStorage.getItem("token") }
       });

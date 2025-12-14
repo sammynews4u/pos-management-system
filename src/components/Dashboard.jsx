@@ -11,7 +11,7 @@ const Dashboard = ({ setAuth }) => {
   // 1. Fetch Dashboard Data (Name, Sales, Stock)
   async function getDashboardData() {
     try {
-      const response = await fetch("http://localhost:5000/dashboard", {
+      const response = await fetch("https://pos-management-system-a8i5.onrender.com/dashboard", {
         method: "GET",
         headers: { token: localStorage.getItem("token") }
       });
