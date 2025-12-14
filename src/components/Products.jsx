@@ -68,7 +68,7 @@ const Products = () => {
         const confirmDelete = window.confirm("Are you sure you want to delete this product?");
         if (!confirmDelete) return;
 
-        await fetch(`https://pos-management-system-a8i5.onrender.com/products/${id}`, {
+        await fetch(`https://pos-server-km8a.onrender.com/products/${id}`, {
             method: "DELETE",
             headers: { token: localStorage.getItem("token") }
         });

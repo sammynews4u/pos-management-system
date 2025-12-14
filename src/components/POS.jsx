@@ -67,7 +67,7 @@ const POS = () => {
 
     try {
         const body = { total_amount: total, cart: cart };
-        const response = await fetch("https://pos-management-system-a8i5.onrender.com/sales/checkout", {
+        const response = await fetch("https://pos-server-km8a.onrender.com/sales/checkout", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",

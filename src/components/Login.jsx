@@ -16,7 +16,7 @@ const Login = ({ setAuth }) => {
     e.preventDefault();
     try {
       const body = { email, password };
-      const response = await fetch("https://pos-management-system-a8i5.onrender.com/auth/login", {
+      const response = await fetch("https://pos-server-km8a.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)

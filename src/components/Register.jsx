@@ -18,7 +18,7 @@ const Register = ({ setAuth }) => {
     e.preventDefault();
     try {
       const body = { company_name, full_name, email, password };
-      const response = await fetch("https://pos-management-system-a8i5.onrender.com", {
+      const response = await fetch("https://pos-server-km8a.onrender.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
