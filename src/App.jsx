@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard";
 import POS from "./components/POS";
 import SalesHistory from "./components/SalesHistory";
 import Subscription from "./components/Subscription";
+import Financials from "./components/Financials";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -80,6 +81,11 @@ function App() {
              path="/sales-history" 
              element={isAuthenticated ? <SalesHistory /> : <Navigate to="/login" />} 
           />
+
+          <Route 
+    path="/financials" 
+    element={isAuthenticated ? <Financials /> : <Navigate to="/login" />} 
+/>
 
           <Route 
     path="/subscribe" 

@@ -4,6 +4,8 @@ import Products from "./Products";
 
 const Dashboard = ({ setAuth }) => {
   const [name, setName] = useState("");
+  
+  // Financial State
   const [financials, setFinancials] = useState({
       total_income: 0,
       total_expenses: 0,
@@ -21,6 +23,7 @@ const Dashboard = ({ setAuth }) => {
   // 1. Fetch Dashboard Data with Filter
   async function getDashboardData() {
     try {
+      // ⚠️ USING YOUR LIVE RENDER URL
       const response = await fetch(`https://pos-server-km8a.onrender.com/dashboard?period=${period}`, {
         method: "GET",
         headers: { token: localStorage.getItem("token") }
@@ -28,6 +31,7 @@ const Dashboard = ({ setAuth }) => {
 
       const parseRes = await response.json();
 
+      // PAYWALL CHECK
       if (parseRes.is_active === false) {
           window.location.href = "/subscribe"; 
           return;
@@ -38,7 +42,7 @@ const Dashboard = ({ setAuth }) => {
 
     } catch (err) {
       console.error(err.message);
-      if(err.message.includes("token")) logout();
+      if(err.message && err.message.includes("token")) logout();
     }
   }
 
@@ -55,9 +59,9 @@ const Dashboard = ({ setAuth }) => {
               body: JSON.stringify(expenseData)
           });
           alert("Expense Recorded!");
-          setExpenseData({ title: "", amount: "" });
-          setShowExpenseForm(false);
-          getDashboardData(); // Refresh numbers
+          setExpenseData({ title: "", amount: "" }); // Reset inputs
+          setShowExpenseForm(false); // Hide form
+          getDashboardData(); // Refresh numbers immediately
       } catch (err) {
           console.error(err);
       }
@@ -77,10 +81,10 @@ const Dashboard = ({ setAuth }) => {
   return (
     <div>
         {/* TOP NAVBAR */}
-        <nav className="navbar navbar-dark bg-dark px-4 shadow">
+        <nav className="navbar navbar-dark bg-dark px-4 shadow sticky-top">
             <span className="navbar-brand mb-0 h1">POS SaaS System</span>
             <div className="d-flex align-items-center">
-                 <span className="text-white me-3">User: {name}</span>
+                 <span className="text-white me-3 d-none d-md-block">User: {name}</span>
                  <button className="btn btn-outline-danger btn-sm" onClick={e => logout(e)}>Logout</button>
             </div>
         </nav>
@@ -88,12 +92,12 @@ const Dashboard = ({ setAuth }) => {
         <div className="container mt-4">
             
             {/* HEADER & CONTROLS */}
-            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <h2>Financial Overview</h2>
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-2 align-items-center">
                     {/* TIME FILTER DROPDOWN */}
                     <select 
-                        className="form-select" 
+                        className="form-select shadow-sm" 
                         value={period} 
                         onChange={(e) => setPeriod(e.target.value)}
                         style={{width: "150px"}}
@@ -112,18 +116,28 @@ const Dashboard = ({ setAuth }) => {
 
             {/* EXPENSE FORM (Collapsible) */}
             <div className="mb-4">
-                <button className="btn btn-outline-danger btn-sm mb-2" onClick={() => setShowExpenseForm(!showExpenseForm)}>
-                    {showExpenseForm ? "- Close Form" : "+ Record Expense (Rent, Fuel, etc)"}
+                <button 
+                    className={`btn btn-sm ${showExpenseForm ? 'btn-secondary' : 'btn-outline-danger'}`} 
+                    onClick={() => setShowExpenseForm(!showExpenseForm)}
+                >
+                    {showExpenseForm ? "Close Form" : "+ Record New Expense"}
                 </button>
                 
                 {showExpenseForm && (
-                    <div className="card p-3 bg-light border-danger">
-                        <form onSubmit={handleAddExpense} className="d-flex gap-2">
-                            <input type="text" placeholder="Expense Title (e.g. Fuel)" className="form-control" required 
-                                value={expenseData.title} onChange={e => setExpenseData({...expenseData, title: e.target.value})} />
-                            <input type="number" placeholder="Amount" className="form-control" required 
-                                value={expenseData.amount} onChange={e => setExpenseData({...expenseData, amount: e.target.value})} />
-                            <button className="btn btn-danger">Save</button>
+                    <div className="card p-3 mt-2 bg-light border-danger shadow-sm">
+                        <h6 className="text-danger">Quick Expense Recorder</h6>
+                        <form onSubmit={handleAddExpense} className="row g-2">
+                            <div className="col-md-5">
+                                <input type="text" placeholder="Title (e.g. Shop Rent, Fuel)" className="form-control" required 
+                                    value={expenseData.title} onChange={e => setExpenseData({...expenseData, title: e.target.value})} />
+                            </div>
+                            <div className="col-md-4">
+                                <input type="number" placeholder="Amount (₦)" className="form-control" required 
+                                    value={expenseData.amount} onChange={e => setExpenseData({...expenseData, amount: e.target.value})} />
+                            </div>
+                            <div className="col-md-3">
+                                <button className="btn btn-danger w-100">Save Expense</button>
+                            </div>
                         </form>
                     </div>
                 )}
@@ -132,19 +146,22 @@ const Dashboard = ({ setAuth }) => {
             {/* FINANCIAL CARDS */}
             <div className="row mb-5">
                 {/* 1. TOTAL INCOME */}
-                <div className="col-md-3">
-                    <div className="card text-white bg-primary mb-3 shadow-sm h-100">
+                <div className="col-md-3 mb-3">
+                    <div className="card text-white bg-primary shadow-sm h-100">
                         <div className="card-body">
                             <h5 className="card-title">Total Income</h5>
                             <p className="card-text fs-3 fw-bold">₦ {Number(financials.total_income).toLocaleString()}</p>
                             <small className="opacity-75">Sales Revenue ({period})</small>
+                            <div className="mt-2">
+                                <Link to="/sales-history" className="text-white text-decoration-underline small">View Sales History</Link>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* 2. EXPENSES */}
-                <div className="col-md-3">
-                    <div className="card text-white bg-danger mb-3 shadow-sm h-100">
+                <div className="col-md-3 mb-3">
+                    <div className="card text-white bg-danger shadow-sm h-100">
                         <div className="card-body">
                             <h5 className="card-title">Expenses</h5>
                             <p className="card-text fs-3 fw-bold">₦ {Number(financials.total_expenses).toLocaleString()}</p>
@@ -154,19 +171,25 @@ const Dashboard = ({ setAuth }) => {
                 </div>
 
                 {/* 3. NET PROFIT */}
-                <div className="col-md-3">
-                    <div className={`card text-white mb-3 shadow-sm h-100 ${financials.net_profit >= 0 ? 'bg-success' : 'bg-dark'}`}>
+                <div className="col-md-3 mb-3">
+                    <div className={`card text-white shadow-sm h-100 ${financials.net_profit >= 0 ? 'bg-success' : 'bg-secondary'}`}>
                         <div className="card-body">
                             <h5 className="card-title">Net Profit</h5>
                             <p className="card-text fs-3 fw-bold">₦ {Number(financials.net_profit).toLocaleString()}</p>
-                            <small className="opacity-75">Income - (Product Cost + Expenses)</small>
+                            <small className="opacity-75">Income - (Cost + Expenses)</small>
+                            <div className="mt-2">
+                                {/* LINK TO NEW FINANCIAL REPORTS PAGE */}
+                                <Link to="/financials" className="btn btn-sm btn-light text-dark">
+                                    <i className="bi bi-file-earmark-text"></i> Export Reports
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                  {/* 4. STOCK */}
-                 <div className="col-md-3">
-                    <div className="card text-dark bg-warning mb-3 shadow-sm h-100">
+                 <div className="col-md-3 mb-3">
+                    <div className="card text-dark bg-warning shadow-sm h-100">
                         <div className="card-body">
                             <h5 className="card-title">Inventory</h5>
                             <p className="card-text fs-3 fw-bold">{financials.total_items} Items</p>
@@ -178,10 +201,9 @@ const Dashboard = ({ setAuth }) => {
 
             <hr className="my-4"/>
 
-            {/* INVENTORY & SALES LINKS */}
-            <div className="d-flex justify-content-between mb-3">
+            {/* INVENTORY MANAGEMENT */}
+            <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4>Inventory Management</h4>
-                <Link to="/sales-history" className="text-primary text-decoration-underline">View Full Sales History</Link>
             </div>
             
             <Products /> 
