@@ -10,6 +10,7 @@ import POS from "./components/POS";
 import SalesHistory from "./components/SalesHistory";
 import Subscription from "./components/Subscription";
 import Financials from "./components/Financials";
+import AdminPanel from "./components/AdminPanel"; // Import
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,6 +82,11 @@ function App() {
              path="/sales-history" 
              element={isAuthenticated ? <SalesHistory /> : <Navigate to="/login" />} 
           />
+
+          <Route 
+    path="/admin" 
+    element={isAuthenticated ? <AdminPanel /> : <Navigate to="/login" />} 
+/>
 
           <Route 
     path="/financials" 
