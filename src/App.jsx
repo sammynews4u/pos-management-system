@@ -20,7 +20,7 @@ function App() {
   // This ensures the user stays logged in if they refresh the browser
   async function isAuth() {
     try {
-      const response = await fetch("https://pos-server-km8a.onrender.com", {
+      const response = await fetch("https://pos-server-km8a.onrender.com/auth/is-verify", {
         method: "GET",
         headers: { token: localStorage.getItem("token") }
       });
