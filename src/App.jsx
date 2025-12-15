@@ -8,6 +8,7 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import POS from "./components/POS";
 import SalesHistory from "./components/SalesHistory";
+import Subscription from "./components/Subscription";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -79,6 +80,11 @@ function App() {
              path="/sales-history" 
              element={isAuthenticated ? <SalesHistory /> : <Navigate to="/login" />} 
           />
+
+          <Route 
+    path="/subscribe" 
+    element={isAuthenticated ? <Subscription /> : <Navigate to="/login" />} 
+/>
 
           {/* 7. CATCH ALL (Redirect to Home) */}
            <Route path="*" element={<Navigate to="/" />} />

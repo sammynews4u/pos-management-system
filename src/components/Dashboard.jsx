@@ -8,28 +8,39 @@ const Dashboard = ({ setAuth }) => {
   const [salesTotal, setSalesTotal] = useState(0);
   const [stockCount, setStockCount] = useState(0);
 
-  // 1. Fetch Dashboard Data (Name, Sales, Stock)
+  // 1. Fetch Dashboard Data
   async function getDashboardData() {
     try {
+      // ⚠️ Make sure this URL matches your Live Render Backend
       const response = await fetch("https://pos-server-km8a.onrender.com/dashboard", {
         method: "GET",
         headers: { token: localStorage.getItem("token") }
       });
 
       const parseRes = await response.json();
+
+      // --- PAYWALL CHECK ---
+      // If the user has not paid, force them to the Subscribe page
+      if (parseRes.is_active === false) {
+          window.location.href = "/subscribe"; 
+          return; // Stop running the rest of the code
+      }
+      // ---------------------
       
       setName(parseRes.full_name);
-      setSalesTotal(parseRes.total_sales); // Update Sales Number
-      setStockCount(parseRes.total_items); // Update Stock Count
+      setSalesTotal(parseRes.total_sales);
+      setStockCount(parseRes.total_items);
 
     } catch (err) {
       console.error(err.message);
+      // If error (e.g., token expired), logout
+      logout(new Event('click'));
     }
   }
 
   // 2. Logout Function
   const logout = (e) => {
-    e.preventDefault();
+    if(e) e.preventDefault();
     localStorage.removeItem("token");
     setAuth(false);
   };
@@ -78,13 +89,13 @@ const Dashboard = ({ setAuth }) => {
                     </div>
                 </div>
 
-                {/* CARD 2: NET INCOME (Placeholder for now) */}
+                {/* CARD 2: NET INCOME */}
                 <div className="col-md-4">
                     <div className="card text-white bg-success mb-3 shadow-sm h-100">
                         <div className="card-body">
                             <h5 className="card-title">Net Income</h5>
                             <p className="card-text fs-2 fw-bold">₦ {Number(salesTotal).toLocaleString()}</p>
-                            <small>Revenue (Expenses not deducted yet)</small>
+                            <small>Revenue (Expenses not deducted)</small>
                         </div>
                     </div>
                 </div>
